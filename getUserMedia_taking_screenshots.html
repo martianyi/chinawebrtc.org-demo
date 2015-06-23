@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>getUserMedia taking screenshots</title>
+</head>
+<body>
+<h1>点击视频截图</h1>
+<video autoplay></video>
+<img src="">
+<canvas style="display:none;"></canvas>
+<hr/>
+<a href="index.html">返回</a>
+
+<script>
+    var video = document.querySelector('video');
+    var canvas = document.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+    var localMediaStream = null;
+
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
+    navigator.msGetUserMedia;
+
+    function snapshot() {
+        if (localMediaStream) {
+            ctx.drawImage(video, 0, 0);
+            document.querySelector('img').src = canvas.toDataURL('image/webp');
+        }
+    }
+
+    video.addEventListener('click', snapshot, false);
+
+    navigator.getUserMedia({video: true},
+            function (stream) {
+                video.src = window.URL.createObjectURL(stream);
+                localMediaStream = stream;
+            },
+            function (error) {
+                console.log(error)
+            }
+    )
+</script>
+</body>
+</html>

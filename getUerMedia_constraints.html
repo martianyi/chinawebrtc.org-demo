@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>getUserMedia Constraints</title>
+</head>
+<body>
+<section>
+    <button id="qvga">QVGA</button>
+    <button id="vga">VGA</button>
+    <button id="hd">HD</button>
+</section>
+
+<video autoplay></video>
+
+<hr/>
+<a href="index.html">返回</a>
+<script>
+    var vgaButton = document.querySelector('button#vga');
+    var qvgaButton = document.querySelector('button#qvga');
+    var hdButton = document.querySelector('button#hd');
+    var video = document.querySelector('video');
+    var stream;
+
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
+    navigator.msGetUserMedia;
+
+    var hdConstraints = {
+        video: {
+            mandatory: {
+                minWidth: 1280,
+                minHeight: 720
+            }
+        }
+    };
+
+    var vgaConstraints = {
+        video: {
+            mandatory: {
+                minWidth: 640,
+                minHeight: 360
+            }
+        }
+    };
+
+    var qvgaConstraints = {
+        video: {
+            mandatory: {
+                maxWidth: 320,
+                maxHeight: 180
+            }
+        }
+    };
+
+    var errorCallback = function (error) {
+        console.log("navigator.getUserMedia error:", error);
+    };
+
+    var successCallback = function (stream) {
+        window.stream = stream;// stream available to console
+        video.src = window.URL.createObjectURL(stream);
+    };
+
+    qvgaButton.onclick = function () {
+        getMedia(qvgaConstraints);
+    };
+    vgaButton.onclick = function () {
+        getMedia(vgaConstraints);
+    };
+    hdButton.onclick = function () {
+        getMedia(hdConstraints);
+    };
+
+    var getMedia = function (constraints) {
+        if (!!stream) {
+            video.src = null;
+            stream.stop();
+        }
+        navigator.getUserMedia(constraints,
+                successCallback, errorCallback);
+    }
+</script>
+</body>
+</html>
